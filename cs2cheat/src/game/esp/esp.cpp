@@ -65,7 +65,9 @@ void esp::Render() {
             ImVec2 winSize = ImGui::GetWindowSize();
 
             // Normalize the coordinate values to be between 0 and 1
-
+            contentss << (min.x / winSize.x) << " " << (min.y / winSize.y) << " "
+					  << ((max.x - min.x) / winSize.x) << " "
+					  << ((max.y - min.y) / winSize.y) << std::endl;
 
             //utils::CaptureWindow((wchar_t*)imgss.str().c_str());
 		}
