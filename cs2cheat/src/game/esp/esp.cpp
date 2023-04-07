@@ -6,12 +6,23 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
+#include <filesystem>
+#include <chrono>
+
+namespace fs = std::filesystem;
+
+// Keep track of every second
+volatile std::time_t last = std::time(0);
+
 void esp::Render() {
     if (!interfaces::pEngine->IsInGame()) return;
 
     CCSPlayerController* pLocalPlayerController =
         interfaces::pEntitySystem->GetLocalPlayerController();
     if (!pLocalPlayerController) return;
+
+    // String containing all bounding boxes in YOLO format
+    std::string yoloList = "";
 
     ImDrawList* pBackgroundDrawList = ImGui::GetBackgroundDrawList();
     for (int i = 1; i <= MAX_PLAYERS; ++i) {
@@ -34,6 +45,19 @@ void esp::Render() {
 
         const ImVec2 min = {bBox.x, bBox.y};
         const ImVec2 max = {bBox.w, bBox.h};
+
+        // Create string which will contain YOLO-format coordinates for this frame
+        std::stringstream s;
+        s << (pLocalPlayerController->m_iTeamNum() == 0) ? "t " : "ct ";
+
+        // Get window height and width from imgui
+        ImVec2 winSize = ImGui::GetWindowSize();
+
+        // Normalize the coordinate values to be between 0 and 1
+        s << (min.x / winSize.x) << " "
+          << (min.y / winSize.y) << " "
+          << ((max.x - min.x) / winSize.x) << " "
+          << ((max.y - min.y) / winSize.y) << "";
 
         if (bBoxEsp) {
             pBackgroundDrawList->AddRect(
