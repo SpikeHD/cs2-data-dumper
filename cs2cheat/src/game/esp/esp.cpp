@@ -59,6 +59,8 @@ void esp::Render() {
           << ((max.x - min.x) / winSize.x) << " "
           << ((max.y - min.y) / winSize.y) << "";
 
+        LOG(s.str().c_str());
+
         if (bBoxEsp) {
             pBackgroundDrawList->AddRect(
                 min, max,

@@ -1,9 +1,11 @@
 #include <thread>
+#include <filesystem>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "../sdk/interfaces/interfaces.hpp"
 #include "../sdk/memory/memory.hpp"
 #include "../hooks/hooks.hpp"
-#include "filesystem"
 
 namespace fs = std::filesystem;
 
@@ -14,6 +16,11 @@ void InitializeCheat() {
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
     }
 
+    console::Initialize();
+    interfaces::Initialize();
+    memory::Initialize();
+    hooks::Initialize();
+
     // Data dump paths
     std::string sMainDumpPath = "./dump";
 
@@ -21,18 +28,20 @@ void InitializeCheat() {
     fs::path pImagePath{sMainDumpPath + "/images"};
     fs::path pLabelPath{sMainDumpPath + "/labels"};
 
-    if (!fs::exists(pImagePath)) {
-        fs::create_directory(pImagePath);
-    }
+    std::stringstream s;
+    s << "Creating dirs..." << std::endl;
+    s << "Image path: " << pImagePath << std::endl;
+    s << "Label path: " << pLabelPath << std::endl;
 
-    if (!fs::exists(pLabelPath)) {
-        fs::create_directory(pLabelPath);
-    }
+     if (!fs::exists(pImagePath)) {
+         fs::create_directories(pImagePath);
+     }
 
-    console::Initialize();
-    interfaces::Initialize();
-    memory::Initialize();
-    hooks::Initialize();
+     if (!fs::exists(pLabelPath)) {
+         fs::create_directories(pLabelPath);
+     }
+
+    LOG(s.str().c_str());
 }
 
 void UninitializeCheat() {
