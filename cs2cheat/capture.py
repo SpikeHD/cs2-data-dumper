@@ -12,10 +12,6 @@ image_file = './dump/images/' + str(timestamp) + '.png'
 # Each argument after is data to push to the label file, so gather all args and make them into one var
 data = " ".join(sys.argv[1:]).replace('\\n ', '\n').replace('\\n', '\n')
 
-# Create create the label file
-with open(label_file, 'w') as f:
-    f.write(data)
-
 # take screenshot using pyautogui
 image = pyautogui.screenshot()
 
@@ -28,3 +24,7 @@ image = cv2.cvtColor(np.array(image),
 
 # writing it to the disk using opencv
 cv2.imwrite(image_file, image)
+
+# Create the label file
+with open(label_file, 'w') as f:
+    f.write(data)

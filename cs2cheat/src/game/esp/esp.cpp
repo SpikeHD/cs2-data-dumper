@@ -57,10 +57,12 @@ void esp::Render() {
             // Get window height and width
             ImVec2 winSize = { 1920, 1080 };
 
-            float xNorm = min.x / winSize.x;
-            float yNorm = min.y / winSize.y;
-            float wNorm = max.x / winSize.x;
-            float hNorm = max.y / winSize.y;
+            float xCenter = (min.x + max.x) / 2;
+            float yCenter = (min.y + max.y) / 2;
+            float xNorm = xCenter / winSize.x;
+            float yNorm = yCenter / winSize.y;
+            float wNorm = (max.x - min.x) / winSize.x;
+            float hNorm = (max.y - min.y) / winSize.y;
 
             // LOG winSize
             LOG("WinX: %.3f WinY: %.3f\n", winSize.x, winSize.y);
