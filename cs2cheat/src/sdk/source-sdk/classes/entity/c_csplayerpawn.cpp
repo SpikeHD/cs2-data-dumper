@@ -17,5 +17,7 @@ bool C_CSPlayerPawn::IsEnemyWithTeam(int team) {
     // for visualization while testing)
     // if (mp_teammates_are_enemies->GetValue<bool>()) return true;
 
-    return m_iTeamNum() != team;
+    return true;
+
+    //return m_iTeamNum() != team;
 }

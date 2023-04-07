@@ -8,6 +8,9 @@
 
 #include <filesystem>
 #include <chrono>
+#include <iostream>
+#include <fstream>
+#include "../../utils/utils.hpp"
 
 namespace fs = std::filesystem;
 
@@ -21,8 +24,14 @@ void esp::Render() {
         interfaces::pEntitySystem->GetLocalPlayerController();
     if (!pLocalPlayerController) return;
 
-    // String containing all bounding boxes in YOLO format
-    std::string yoloList = "";
+    // Create filename out of current time
+    std::stringstream imgss("");
+    imgss << "./dump/images/" << static_cast<long int>(last) << ".jpg";
+
+    // Create stringstream which will contain YOLO-format coordinates for this
+    // frame
+    std::stringstream labelss, contentss;
+    labelss << "./dump/labels/" << static_cast<long int>(last) << ".txt";
 
     ImDrawList* pBackgroundDrawList = ImGui::GetBackgroundDrawList();
     for (int i = 1; i <= MAX_PLAYERS; ++i) {
@@ -46,20 +55,20 @@ void esp::Render() {
         const ImVec2 min = {bBox.x, bBox.y};
         const ImVec2 max = {bBox.w, bBox.h};
 
-        // Create string which will contain YOLO-format coordinates for this frame
-        std::stringstream s;
-        s << (pLocalPlayerController->m_iTeamNum() == 0) ? "t " : "ct ";
+        // If it has been one second since the last time we saved the image, save a new one
+        if (std::difftime(std::time(0), last) >= 1) {
+			last = std::time(0);
 
-        // Get window height and width from imgui
-        ImVec2 winSize = ImGui::GetWindowSize();
+            contentss << (pLocalPlayerController->m_iTeamNum() == 0) ? "t " : "ct ";
 
-        // Normalize the coordinate values to be between 0 and 1
-        s << (min.x / winSize.x) << " "
-          << (min.y / winSize.y) << " "
-          << ((max.x - min.x) / winSize.x) << " "
-          << ((max.y - min.y) / winSize.y) << "";
+            // Get window height and width from imgui
+            ImVec2 winSize = ImGui::GetWindowSize();
 
-        LOG(s.str().c_str());
+            // Normalize the coordinate values to be between 0 and 1
+
+
+            //utils::CaptureWindow((wchar_t*)imgss.str().c_str());
+		}
 
         if (bBoxEsp) {
             pBackgroundDrawList->AddRect(
@@ -109,4 +118,10 @@ void esp::Render() {
             }
         }
     }
+
+    
+    // Save label file
+    std::ofstream file(labelss.str());
+    file << contentss.str() << std::endl;
+    file.close();
 }
