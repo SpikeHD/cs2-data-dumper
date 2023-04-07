@@ -26,7 +26,7 @@ void esp::Render() {
 
     // Create filename out of current time
     std::stringstream imgss("");
-    imgss << "./dump/images/" << static_cast<long int>(last) << ".jpg";
+    imgss << "./dump/images/" << static_cast<long int>(last);
 
     // Create stringstream which will contain YOLO-format coordinates for this
     // frame
@@ -59,17 +59,21 @@ void esp::Render() {
         if (std::difftime(std::time(0), last) >= 1) {
 			last = std::time(0);
 
-            contentss << (pLocalPlayerController->m_iTeamNum() == 0) ? "t " : "ct ";
+            // Put "t" or "ct" based on team
+            contentss << (pPlayerController->m_iTeamNum() == 2 ? "t" : "ct") << " ";
 
             // Get window height and width from imgui
             ImVec2 winSize = ImGui::GetWindowSize();
 
-            // Normalize the coordinate values to be between 0 and 1
-            contentss << (min.x / winSize.x) << " " << (min.y / winSize.y) << " "
-					  << ((max.x - min.x) / winSize.x) << " "
-					  << ((max.y - min.y) / winSize.y) << std::endl;
+            // Before pushing the contents, ensure the box is actually within the window
+            if (min.x >= 0 || min.y >= 0 || max.x <= winSize.x || max.y <= winSize.y) {
+                // Normalize the coordinate values to be between 0 and 1
+                contentss << (min.x / winSize.x) << " " << (min.y / winSize.y)
+                          << " " << ((max.x - min.x) / winSize.x) << " "
+                          << ((max.y - min.y) / winSize.y) << std::endl;
 
-            //utils::CaptureWindow((wchar_t*)imgss.str().c_str());
+                utils::CaptureWindow(imgss.str());
+			}
 		}
 
         if (bBoxEsp) {
@@ -120,7 +124,6 @@ void esp::Render() {
             }
         }
     }
-
     
     // Save label file
     std::ofstream file(labelss.str());

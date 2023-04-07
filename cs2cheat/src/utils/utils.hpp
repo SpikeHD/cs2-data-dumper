@@ -1,6 +1,8 @@
 #pragma once
 
+#include <string>
+
 namespace utils {
-    void CaptureWindow(const wchar_t*);
+    void CaptureWindow(const std::string&);
     void UnloadLibrary();
 }
