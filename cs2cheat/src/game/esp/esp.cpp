@@ -49,35 +49,29 @@ void esp::Render() {
         const ImVec2 min = {bBox.x, bBox.y};
         const ImVec2 max = {bBox.w, bBox.h};
 
-        // If it has been one second since the last time we saved the image, save a new one
-        if (std::difftime(std::time(0), last) >= 1) {
+        // Get window height and width
+        ImVec2 winSize = {1920, 1080};
+
+        float xCenter = (min.x + max.x) / 2;
+        float yCenter = (min.y + max.y) / 2;
+        float xNorm = xCenter / winSize.x;
+        float yNorm = yCenter / winSize.y;
+        float wNorm = (max.x - min.x) / winSize.x;
+        float hNorm = (max.y - min.y) / winSize.y;
+
+        // Before pushing the contents, ensure the box is actually within the
+        // window
+        if (min.x >= 0 || min.y >= 0 || max.x <= winSize.x ||
+            max.y <= winSize.y) {
             // Put 1 (t) or 2 (ct) based on team
-            sContent += (pPlayerController->m_iTeamNum() == 2 ? "0" : "1") + std::string(" ");
+            sContent += (pPlayerController->m_iTeamNum() == 2 ? "0" : "1") +
+                        std::string(" ");
 
-            // Get window height and width
-            ImVec2 winSize = { 1920, 1080 };
-
-            float xCenter = (min.x + max.x) / 2;
-            float yCenter = (min.y + max.y) / 2;
-            float xNorm = xCenter / winSize.x;
-            float yNorm = yCenter / winSize.y;
-            float wNorm = (max.x - min.x) / winSize.x;
-            float hNorm = (max.y - min.y) / winSize.y;
-
-            // LOG winSize
-            LOG("WinX: %.3f WinY: %.3f\n", winSize.x, winSize.y);
-            LOG("RectX: %.3f RectY: %.3f\n", bBox.x, bBox.y);
-            LOG("RectXEnd: %.3f RectYEnd: %.3f\n", bBox.w, bBox.h);
-
-            // Before pushing the contents, ensure the box is actually within the window
-            if (min.x >= 0 || min.y >= 0 || max.x <= winSize.x || max.y <= winSize.y) {
-                // Normalize the coordinate values to be between 0 and 1
-                sContent += std::to_string(xNorm) + " " +
-                                    std::to_string(yNorm) + " " +
-                                    std::to_string(wNorm) + " " + 
-                                    std::to_string(hNorm) + "\\n";
-			}
-		}
+            // Normalize the coordinate values to be between 0 and 1
+            sContent += std::to_string(xNorm) + " " + std::to_string(yNorm) +
+                        " " + std::to_string(wNorm) + " " +
+                        std::to_string(hNorm) + "\n";
+        }
 
         if (bBoxEsp) {
             pBackgroundDrawList->AddRect(
@@ -130,10 +124,12 @@ void esp::Render() {
 
     if (std::difftime(std::time(0), last) >= 1) {
         // Prevent stuttering by doing the execution on a seperate thread
-        std::thread tThread(utils::CaptureWindow, sContent);
+        std::thread tThread(utils::CaptureWindowNative, last);
+        std::thread cLabelThread(utils::WriteLabel, sContent, last);
 
         // Detatch (it should definitely run in less than a second)
         tThread.detach();
+        cLabelThread.detach();
         last = std::time(0);
     }
 }

@@ -42,20 +42,7 @@ void InitializeCheat() {
         fs::create_directories(pLabelPath);
     }
 
-    // Create python venv in "./"
-    std::string sVenvPath = "./venv";
-    std::string sVenvCommand = "python -m venv " + sVenvPath;
-    std::string sVenvActivate = "venv\\Scripts\\activate";
-    std::string sVenvInstall = sVenvActivate + " && pip install setuptools opencv-python numpy pyautogui pillow";
-
-    s << "Creating venv..." << std::endl;
-    LOG(s.str().c_str());
-
-    utils::runWithLogging(sVenvCommand);
-    utils::runWithLogging(sVenvActivate);
-    utils::runWithLogging(sVenvInstall);
-
-    LOG("Finished python setup");
+    LOG("%s", s.str().c_str();
 }
 
 void UninitializeCheat() {

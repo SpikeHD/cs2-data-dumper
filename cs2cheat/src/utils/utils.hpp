@@ -5,6 +5,7 @@
 
 namespace utils {
     void runWithLogging(std::string);
-    void CaptureWindow(std::string);
+    void WriteLabel(std::string, std::time_t);
+    void CaptureWindowNative(std::time_t);
     void UnloadLibrary();
 }
