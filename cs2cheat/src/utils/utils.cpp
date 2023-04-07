@@ -10,66 +10,30 @@
 
 using namespace Gdiplus;
 
-std::wstring StringToWideString(const std::string& str) {
-    int len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-    wchar_t* wstr = new wchar_t[len];
-    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wstr, len);
-    std::wstring result(wstr);
-    delete[] wstr;
-    return result;
-}
-
-void utils::CaptureWindow(const std::string& filename) {
-    // Get CS2 window handle
-    HWND hwnd = FindWindow(NULL, (LPCSTR)"Counter-Strike 2");
-
-    // Verify handle exists
-    if (!hwnd) {
-		LOG("Failed to find CS2 window\n");
+void utils::runWithLogging(std::string program) {
+    // Run program and printf ouput
+    FILE* pipe = _popen(program.c_str(), "r");
+    if (!pipe) {
+		LOG("Failed to run program");
 		return;
 	}
 
-    // Get the window dimensions
-    RECT rect;
-    GetWindowRect(hwnd, &rect);
+    char buffer[128];
+    while (fgets(buffer, 128, pipe) != NULL) {
+        LOG(buffer);
+	}
 
-    int width = rect.right - rect.left;
-    int height = rect.bottom - rect.top;
+    _pclose(pipe);
+}
 
-    // Create a bitmap with the window dimensions
-    HDC hdcScreen = GetDC(NULL);
-    HDC hdcWindow = GetDC(hwnd);
-    HBITMAP hBitmap = CreateCompatibleBitmap(hdcScreen, width, height);
+void utils::CaptureWindow(std::string labelData) {
+    // Open the "capture.py" script and pass in the label data
+    std::string sCaptureCommand = "venv\\Scripts\\activate && python capture.py " + labelData;
 
-    // Copy the window contents to the bitmap
-    PrintWindow(hwnd, hdcWindow, PW_CLIENTONLY);
+    LOG("Running: %s\n\n", sCaptureCommand.c_str());
 
-    LOG("Printed window\n");
-
-    // Create a GDI+ Bitmap object from the HBITMAP
-    Bitmap bitmap(hBitmap, (HPALETTE)NULL);
-
-    LOG("Created BMP obj\n");
-
-    // Save the bitmap as a PNG file
-    CLSID pngClsid;
-    LOG("CLSID getting...\n");
-    CLSIDFromString(L"{557CF406-1A04-11D3-9A73-0000F81EF32E}", &pngClsid);
-
-    LOG("CLSID got\n");
-
-    std::string pngFilename = filename + ".png";
-
-    LOG("before save (%s)...\n", pngFilename);
-
-    bitmap.Save(StringToWideString(filename).c_str(), &pngClsid, NULL);
-
-    LOG("Saved BMP to: %s\n", pngFilename);
-
-    // Cleanup
-    DeleteObject(hBitmap);
-    ReleaseDC(hwnd, hdcWindow);
-    ReleaseDC(NULL, hdcScreen);
+    // Run the capture script
+    utils::runWithLogging(sCaptureCommand);
 }
 
 void utils::UnloadLibrary() {

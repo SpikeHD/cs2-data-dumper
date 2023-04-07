@@ -205,6 +205,9 @@
     <ClCompile Include="src\sdk\source-sdk\schema\schema.cpp" />
     <ClCompile Include="src\utils\utils.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="capture.py" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

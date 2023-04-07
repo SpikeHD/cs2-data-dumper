@@ -46,7 +46,6 @@
     <ClInclude Include="src\sdk\source-sdk\classes\entity\centityidentity.hpp" />
     <ClInclude Include="src\sdk\source-sdk\classes\entity\centityinstance.hpp" />
     <ClInclude Include="src\sdk\source-sdk\classes\entity\c_csplayerpawn.hpp" />
-    <ClInclude Include="src\sdk\source-sdk\classes\entity\chandle.hpp" />
     <ClInclude Include="src\sdk\math\types\vector.hpp" />
     <ClInclude Include="src\sdk\source-sdk\classes\entity\cgamescenenode.hpp" />
     <ClInclude Include="src\utils\utils.hpp" />
@@ -67,6 +66,9 @@
     <ClInclude Include="src\sdk\source-sdk\classes\entity\c_econitemview.hpp" />
     <ClInclude Include="src\sdk\source-sdk\classes\entity\c_attributecontainer.hpp" />
     <ClInclude Include="src\sdk\source-sdk\classes\types\cnetworkutlvectorbase.hpp" />
+    <ClInclude Include="src\sdk\source-sdk\classes\entity\ccsplayer_viewmodelservices.hpp" />
+    <ClInclude Include="src\sdk\source-sdk\classes\entity\c_csplayerpawnbase.hpp" />
+    <ClInclude Include="src\sdk\source-sdk\classes\types\chandle.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\sdk\memory\memory.cpp" />
@@ -97,7 +99,6 @@
     <ClCompile Include="dependencies\imgui\imgui_tables.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\hooks\platform\graphics\directx11_hook.cpp" />
-    <ClCompile Include="src\sdk\source-sdk\classes\entity\chandle.cpp" />
     <ClCompile Include="src\utils\utils.cpp" />
     <ClCompile Include="src\api\unload\unload.cpp" />
     <ClCompile Include="src\sdk\source-sdk\classes\entity\c_baseentity.cpp" />
@@ -110,5 +111,10 @@
     <ClCompile Include="src\hooks\platform\pre_graphic_hook.cpp" />
     <ClCompile Include="src\hooks\platform\graphics\vulkan_hook.cpp" />
     <ClCompile Include="src\game\skins\skin_changer.cpp" />
+    <ClCompile Include="src\sdk\source-sdk\classes\entity\cgamescenenode.cpp" />
+    <ClCompile Include="src\sdk\source-sdk\classes\types\chandle.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="capture.py" />
   </ItemGroup>
 </Project>

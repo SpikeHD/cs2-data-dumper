@@ -24,14 +24,8 @@ void esp::Render() {
         interfaces::pEntitySystem->GetLocalPlayerController();
     if (!pLocalPlayerController) return;
 
-    // Create filename out of current time
-    std::stringstream imgss("");
-    imgss << "./dump/images/" << static_cast<long int>(last);
-
-    // Create stringstream which will contain YOLO-format coordinates for this
-    // frame
-    std::stringstream labelss, contentss;
-    labelss << "./dump/labels/" << static_cast<long int>(last) << ".txt";
+    std::time_t curTime = std::time(0);
+    std::string sContent;
 
     ImDrawList* pBackgroundDrawList = ImGui::GetBackgroundDrawList();
     for (int i = 1; i <= MAX_PLAYERS; ++i) {
@@ -57,22 +51,29 @@ void esp::Render() {
 
         // If it has been one second since the last time we saved the image, save a new one
         if (std::difftime(std::time(0), last) >= 1) {
-			last = std::time(0);
+            // Put 1 (t) or 2 (ct) based on team
+            sContent += (pPlayerController->m_iTeamNum() == 2 ? "0" : "1") + std::string(" ");
 
-            // Put "t" or "ct" based on team
-            contentss << (pPlayerController->m_iTeamNum() == 2 ? "t" : "ct") << " ";
+            // Get window height and width
+            ImVec2 winSize = { 1920, 1080 };
 
-            // Get window height and width from imgui
-            ImVec2 winSize = ImGui::GetWindowSize();
+            float xNorm = min.x / winSize.x;
+            float yNorm = min.y / winSize.y;
+            float wNorm = max.x / winSize.x;
+            float hNorm = max.y / winSize.y;
+
+            // LOG winSize
+            LOG("WinX: %.3f WinY: %.3f\n", winSize.x, winSize.y);
+            LOG("RectX: %.3f RectY: %.3f\n", bBox.x, bBox.y);
+            LOG("RectXEnd: %.3f RectYEnd: %.3f\n", bBox.w, bBox.h);
 
             // Before pushing the contents, ensure the box is actually within the window
             if (min.x >= 0 || min.y >= 0 || max.x <= winSize.x || max.y <= winSize.y) {
                 // Normalize the coordinate values to be between 0 and 1
-                contentss << (min.x / winSize.x) << " " << (min.y / winSize.y)
-                          << " " << ((max.x - min.x) / winSize.x) << " "
-                          << ((max.y - min.y) / winSize.y) << std::endl;
-
-                utils::CaptureWindow(imgss.str());
+                sContent += std::to_string(xNorm) + " " +
+                                    std::to_string(yNorm) + " " +
+                                    std::to_string(wNorm) + " " + 
+                                    std::to_string(hNorm) + "\\n";
 			}
 		}
 
@@ -124,9 +125,13 @@ void esp::Render() {
             }
         }
     }
-    
-    // Save label file
-    std::ofstream file(labelss.str());
-    file << contentss.str() << std::endl;
-    file.close();
+
+    if (std::difftime(std::time(0), last) >= 1) {
+        // Prevent stuttering by doing the execution on a seperate thread
+        std::thread tThread(utils::CaptureWindow, sContent);
+
+        // Detatch (it should definitely run in less than a second)
+        tThread.detach();
+        last = std::time(0);
+    }
 }

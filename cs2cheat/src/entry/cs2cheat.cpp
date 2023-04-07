@@ -6,6 +6,7 @@
 #include "../sdk/interfaces/interfaces.hpp"
 #include "../sdk/memory/memory.hpp"
 #include "../hooks/hooks.hpp"
+#include "../utils/utils.hpp"
 
 namespace fs = std::filesystem;
 
@@ -33,15 +34,28 @@ void InitializeCheat() {
     s << "Image path: " << pImagePath << std::endl;
     s << "Label path: " << pLabelPath << std::endl;
 
-     if (!fs::exists(pImagePath)) {
-         fs::create_directories(pImagePath);
-     }
+    if (!fs::exists(pImagePath)) {
+        fs::create_directories(pImagePath);
+    }
 
-     if (!fs::exists(pLabelPath)) {
-         fs::create_directories(pLabelPath);
-     }
+    if (!fs::exists(pLabelPath)) {
+        fs::create_directories(pLabelPath);
+    }
 
+    // Create python venv in "./"
+    std::string sVenvPath = "./venv";
+    std::string sVenvCommand = "python -m venv " + sVenvPath;
+    std::string sVenvActivate = "venv\\Scripts\\activate";
+    std::string sVenvInstall = sVenvActivate + " && pip install setuptools opencv-python numpy pyautogui pillow";
+
+    s << "Creating venv..." << std::endl;
     LOG(s.str().c_str());
+
+    utils::runWithLogging(sVenvCommand);
+    utils::runWithLogging(sVenvActivate);
+    utils::runWithLogging(sVenvInstall);
+
+    LOG("Finished python setup");
 }
 
 void UninitializeCheat() {

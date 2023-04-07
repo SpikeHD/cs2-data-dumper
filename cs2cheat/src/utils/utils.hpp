@@ -1,8 +1,10 @@
 #pragma once
 
 #include <string>
+#include <chrono>
 
 namespace utils {
-    void CaptureWindow(const std::string&);
+    void runWithLogging(std::string);
+    void CaptureWindow(std::string);
     void UnloadLibrary();
 }
