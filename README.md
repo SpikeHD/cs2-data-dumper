@@ -10,6 +10,9 @@ cs2-sdk
 ## What's this?
 Plain SDK that has basic functionality such as: hooking, interface getter, schema manager, basic math and basic ESP for demonstration purposes.
 
+## How has it been modified?
+I have added two major components, label creation and screen grabbing. A `dumps` folder will be created within the CS2 folder, and this will contain all of the images and label data gathered while you play the game. It captures an image/label pair once every second.
+
 Tested on:
 - Windows
 ## Media
