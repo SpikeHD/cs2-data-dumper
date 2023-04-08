@@ -11,7 +11,7 @@ cs2-sdk
 Plain SDK that has basic functionality such as: hooking, interface getter, schema manager, basic math and basic ESP for demonstration purposes.
 
 ## How has it been modified?
-I have added two major components, label creation and screen grabbing. A `dumps` folder will be created within the CS2 folder (specifically in the `win64` folder), and this will contain all of the images and label data gathered while you play the game. It captures an image/label pair once every second. You can view the changes from the original project [here](https://github.com/bruhmoment21/cs2-sdk/compare/main...SpikeHD:cs2-data-dumper:main).
+I have added two major components, label creation and screen grabbing. A `dumps` folder will be created within the CS2 folder (specifically in the `win64` folder), and this will contain all of the images and label data gathered while you play the game. It captures an image/label pair once every second. You can view the changes from the original project [here](https://github.com/bruhmoment21/cs2-sdk/compare/main...SpikeHD:cs2-data-dumper:main). This has been used in tandem with my project [CSMLC](https://github.com/SpikeHD/CSMLC)
 
 Tested on:
 - Windows
